@@ -83,57 +83,6 @@ export function CrosswordGenerator() {
     setNewDefinition("");
   };
 
-  // const handleBulkAddWords = () => {
-  //   if (!wordInput.trim()) {
-  //     toast({
-  //       title: "Entrée vide",
-  //       description: "Veuillez saisir des mots et définitions.",
-  //       variant: "destructive",
-  //     });
-  //     return;
-  //   }
-
-  //   const lines = wordInput.trim().split("\n");
-  //   const newWords: Word[] = [];
-  //   let hasErrors = false;
-
-  //   lines.forEach((line) => {
-  //     const parts = line.split(":");
-  //     if (parts.length !== 2) {
-  //       hasErrors = true;
-  //       return;
-  //     }
-
-  //     const word = parts[0].trim().toUpperCase();
-  //     const definition = parts[1].trim();
-
-  //     if (word && definition && !words.some((w) => w.word === word)) {
-  //       newWords.push({
-  //         id: `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
-  //         word,
-  //         definition,
-  //       });
-  //     }
-  //   });
-
-  //   if (hasErrors) {
-  //     toast({
-  //       title: "Format incorrect",
-  //       description: "Format attendu: MOT: DÉFINITION (une paire par ligne)",
-  //       variant: "destructive",
-  //     });
-  //   }
-
-  //   if (newWords.length > 0) {
-  //     setWords([...words, ...newWords]);
-  //     setWordInput("");
-  //     toast({
-  //       title: "Mots ajoutés",
-  //       description: `${newWords.length} mot(s) ajouté(s) avec succès.`,
-  //     });
-  //   }
-  // };
-
   const handleRemoveWord = (id: string) => {
     setWords(words.filter((word) => word.id !== id));
   };
@@ -168,7 +117,6 @@ export function CrosswordGenerator() {
   };
 
   const handleExportPDF = async () => {
-    console.log("triggered");
     if (!crosswordRef.current || !crosswordData) {
       console.log("triggered inside");
       toast({
@@ -244,8 +192,14 @@ export function CrosswordGenerator() {
   return (
     <Tabs defaultValue="words" value={selectedTab} className="space-y-6">
       <TabsList className="grid grid-cols-2 w-full max-w-md mx-auto">
-        <TabsTrigger value="words">Créer</TabsTrigger>
-        <TabsTrigger value="export" disabled={words.length < 5}>
+        <TabsTrigger value="words" onClick={() => setSelectedTab("words")}>
+          Créer
+        </TabsTrigger>
+        <TabsTrigger
+          value="export"
+          disabled={words.length < 5}
+          onClick={() => setSelectedTab("export")}
+        >
           Partager
         </TabsTrigger>
       </TabsList>
@@ -313,7 +267,11 @@ export function CrosswordGenerator() {
           {crosswordData && (
             <>
               <div className="flex justify-center mb-6">
-                <Button size="lg" onClick={handleExportPDF} className="px-8">
+                <Button
+                  size="lg"
+                  onClick={handleGenerateCrossword}
+                  className="px-8 mr-4"
+                >
                   Régénérer grille
                 </Button>
                 <Button size="lg" onClick={handleExportPDF} className="px-8">

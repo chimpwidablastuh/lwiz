@@ -10,12 +10,16 @@ interface CrosswordGridProps {
 
 export function CrosswordGrid({ crosswordData }: CrosswordGridProps) {
   const [cellSize, setCellSize] = useState(40);
+  const [ratio, setRatio] = useState(1);
+  const [hiddenMode, setHiddenMode] = useState<boolean>(true);
 
   useEffect(() => {
     // Ajuster la taille des cellules en fonction de la taille de la grille
     const maxSize = Math.max(crosswordData.width, crosswordData.height);
     const newSize = Math.min(40, Math.max(20, 600 / maxSize));
+    const r = newSize / cellSize;
     setCellSize(newSize);
+    setRatio(r);
   }, [crosswordData.width, crosswordData.height]);
 
   return (
@@ -68,14 +72,17 @@ export function CrosswordGrid({ crosswordData }: CrosswordGridProps) {
                           <ArrowDown size={cellSize / 4} />
                         )}
                       </div>
-                      <div className="w-full line-clamp-4 text-center pt-1">
+                      <div
+                        className="w-full line-clamp-4 text-center pt-1"
+                        style={{ fontSize: 6 * ratio }}
+                      >
                         {definitionCell.definition}
                       </div>
                     </div>
                   ) : (
                     cellValue && (
                       <span className="select-none font-medium">
-                        {cellValue}
+                        {!hiddenMode && cellValue}
                       </span>
                     )
                   )}
