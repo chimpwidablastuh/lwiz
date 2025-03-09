@@ -6,12 +6,12 @@ import type { CrosswordData } from "@/components/crossword-generator";
 
 interface CrosswordGridProps {
   crosswordData: CrosswordData;
+  hidden?: boolean;
 }
 
-export function CrosswordGrid({ crosswordData }: CrosswordGridProps) {
+export function CrosswordGrid({ crosswordData, hidden }: CrosswordGridProps) {
   const [cellSize, setCellSize] = useState(40);
   const [ratio, setRatio] = useState(1);
-  const [hiddenMode, setHiddenMode] = useState<boolean>(true);
 
   useEffect(() => {
     // Ajuster la taille des cellules en fonction de la taille de la grille
@@ -82,7 +82,7 @@ export function CrosswordGrid({ crosswordData }: CrosswordGridProps) {
                   ) : (
                     cellValue && (
                       <span className="select-none font-medium">
-                        {!hiddenMode && cellValue}
+                        {!hidden && cellValue}
                       </span>
                     )
                   )}

@@ -40,21 +40,22 @@ export function CrosswordGenerator() {
   const [words, setWords] = useState<Word[]>(mocks);
   const [newWord, setNewWord] = useState("");
   const [newDefinition, setNewDefinition] = useState("");
-  const [wordInput, setWordInput] = useState("");
+  // const [wordInput, setWordInput] = useState("");
+  const [hiddenMode, setHiddenMode] = useState(false);
   const [selectedTab, setSelectedTab] = useState<"words" | "export">("words");
   const [crosswordData, setCrosswordData] = useState<CrosswordData | null>(
     null
   );
   const { toast } = useToast();
   const crosswordRef = useRef<HTMLDivElement>(null);
-  const exportTabRef = useRef<HTMLButtonElement>(null);
 
   // Mise à jour de la grille si les mots changent
   useEffect(() => {
     if (words.length >= 5) {
       handleGenerateCrossword();
     }
-  }, [words]);
+    // @ts-expect-error
+  }, [words, handleGenerateCrossword]);
 
   const handleAddWord = () => {
     if (newWord.trim() === "" || newDefinition.trim() === "") {
@@ -111,7 +112,7 @@ export function CrosswordGenerator() {
         title: "Grille générée",
         description: "La grille a été générée avec succès.",
       });
-    } catch (error) {
+    } catch {
       toast({
         title: "Erreur",
         description:
@@ -122,6 +123,8 @@ export function CrosswordGenerator() {
   };
 
   const handleExportPDF = async () => {
+    setHiddenMode(true);
+    await new Promise((resolve) => setTimeout(resolve, 100));
     if (!crosswordRef.current || !crosswordData) {
       console.log("triggered inside");
       toast({
@@ -187,6 +190,7 @@ export function CrosswordGenerator() {
         variant: "destructive",
       });
     }
+    setHiddenMode(false);
   };
 
   function onSubmitForm(e: React.FormEvent) {
@@ -286,7 +290,10 @@ export function CrosswordGenerator() {
               </div>
 
               <div className="mt-4 border rounded-lg p-4" ref={crosswordRef}>
-                <CrosswordGrid crosswordData={crosswordData} />
+                <CrosswordGrid
+                  crosswordData={crosswordData}
+                  hidden={hiddenMode}
+                />
               </div>
             </>
           )}

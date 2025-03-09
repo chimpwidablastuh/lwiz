@@ -91,7 +91,7 @@ const TrueFocus: React.FC<TrueFocusProps> = ({
         return (
           <span
             key={index}
-            // @ts-ignore
+            // @ts-expect-error
             ref={(el) => (wordRefs.current[index] = el)}
             className="relative text-[3rem] font-black cursor-pointer"
             style={

@@ -94,7 +94,7 @@ const SplitText: React.FC<SplitTextProps> = ({
               letterIndex;
 
             return (
-              // @ts-ignore
+              // @ts-expect-error
               <animated.span
                 key={index}
                 style={springs[index] as unknown as React.CSSProperties}
