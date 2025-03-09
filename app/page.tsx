@@ -1,7 +1,6 @@
 import Squares from "@/components/backgrounds/Squares/Squares";
 import { CrosswordGenerator } from "@/components/crossword-generator";
 import SplitText from "@/components/textanimations/SplitText/SplitText";
-import { Typewriter } from "@/components/typewriter";
 
 export default function Home() {
   return (
@@ -18,6 +17,7 @@ export default function Home() {
           <h1 className="text-8xl font-bold text-center mb-6">
             <SplitText
               text="Lwiz."
+              className="text-center"
               delay={150}
               animationFrom={{ opacity: 0, transform: "translate3d(0,50px,0)" }}
               animationTo={{ opacity: 1, transform: "translate3d(0,0,0)" }}
@@ -26,8 +26,7 @@ export default function Home() {
             />
           </h1>
           <p className="text-center mb-8 text-gray-600">
-            Créez facilement des grilles de mots fléchés personnalisées et
-            exportez-les en PDF
+            Créez vos propres mots fléchés et partagez-les avec vos amis.
           </p>
           <CrosswordGenerator />
         </div>
