@@ -54,8 +54,7 @@ export function CrosswordGenerator() {
     if (words.length >= 5) {
       handleGenerateCrossword();
     }
-    // @ts-expect-error
-  }, [words, handleGenerateCrossword]);
+  }, [words]);
 
   const handleAddWord = () => {
     if (newWord.trim() === "" || newDefinition.trim() === "") {

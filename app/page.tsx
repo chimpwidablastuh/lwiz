@@ -1,5 +1,6 @@
 import Squares from "@/components/backgrounds/Squares/Squares";
 import { CrosswordGenerator } from "@/components/crossword-generator";
+import SplitText from "@/components/textanimations/SplitText/SplitText";
 import { Typewriter } from "@/components/typewriter";
 
 export default function Home() {
@@ -14,8 +15,15 @@ export default function Home() {
       />
       <main className="min-h-screen p-6 md:p-12 bg-gray-50">
         <div className="max-w-3xl mx-auto">
-          <h1 className="text-3xl font-bold text-center mb-6">
-            <Typewriter text="Générateur de mots fléchés" />
+          <h1 className="text-8xl font-bold text-center mb-6">
+            <SplitText
+              text="Lwiz."
+              delay={150}
+              animationFrom={{ opacity: 0, transform: "translate3d(0,50px,0)" }}
+              animationTo={{ opacity: 1, transform: "translate3d(0,0,0)" }}
+              threshold={0.2}
+              rootMargin="-50px"
+            />
           </h1>
           <p className="text-center mb-8 text-gray-600">
             Créez facilement des grilles de mots fléchés personnalisées et
