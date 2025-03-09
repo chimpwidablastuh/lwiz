@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -49,6 +49,13 @@ export function CrosswordGenerator() {
   const crosswordRef = useRef<HTMLDivElement>(null);
   const exportTabRef = useRef<HTMLButtonElement>(null);
 
+  // Mise à jour de la grille si les mots changent
+  useEffect(() => {
+    if (words.length >= 5) {
+      handleGenerateCrossword();
+    }
+  }, [words]);
+
   const handleAddWord = () => {
     if (newWord.trim() === "" || newDefinition.trim() === "") {
       toast({
@@ -96,8 +103,6 @@ export function CrosswordGenerator() {
       });
       return;
     }
-
-    setSelectedTab("export");
 
     try {
       const data = generateCrossword(words);
@@ -238,10 +243,10 @@ export function CrosswordGenerator() {
               </form>
               <Button onClick={handleAddWord}>Ajouter le mot</Button>
               <Button
-                onClick={handleGenerateCrossword}
+                onClick={() => setSelectedTab("export")}
                 disabled={words.length < 5}
               >
-                Générer la grille
+                Voir la grille
               </Button>
             </div>
           </div>
@@ -269,10 +274,11 @@ export function CrosswordGenerator() {
               <div className="flex justify-center mb-6">
                 <Button
                   size="lg"
-                  onClick={handleGenerateCrossword}
+                  // onClick={onPublish}
+                  disabled={true}
                   className="px-8 mr-4"
                 >
-                  Régénérer grille
+                  Publier
                 </Button>
                 <Button size="lg" onClick={handleExportPDF} className="px-8">
                   Exporter en PDF
