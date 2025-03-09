@@ -12,7 +12,7 @@ import { CrosswordGrid } from "@/components/crossword-grid";
 import { generateCrossword } from "@/lib/crossword-algorithm";
 import { useToast } from "@/hooks/use-toast";
 import { jsPDF } from "jspdf";
-import html2canvas from "html2canvas";
+import html2canvas from "html2canvas-pro";
 import { words as mocks } from "@/mocks/words";
 
 export type Word = {
@@ -41,11 +41,13 @@ export function CrosswordGenerator() {
   const [newWord, setNewWord] = useState("");
   const [newDefinition, setNewDefinition] = useState("");
   const [wordInput, setWordInput] = useState("");
+  const [selectedTab, setSelectedTab] = useState<"words" | "export">("words");
   const [crosswordData, setCrosswordData] = useState<CrosswordData | null>(
     null
   );
   const { toast } = useToast();
   const crosswordRef = useRef<HTMLDivElement>(null);
+  const exportTabRef = useRef<HTMLButtonElement>(null);
 
   const handleAddWord = () => {
     if (newWord.trim() === "" || newDefinition.trim() === "") {
@@ -146,6 +148,8 @@ export function CrosswordGenerator() {
       return;
     }
 
+    setSelectedTab("export");
+
     try {
       const data = generateCrossword(words);
       setCrosswordData(data);
@@ -238,7 +242,7 @@ export function CrosswordGenerator() {
   }
 
   return (
-    <Tabs defaultValue="words" className="space-y-6">
+    <Tabs defaultValue="words" value={selectedTab} className="space-y-6">
       <TabsList className="grid grid-cols-2 w-full max-w-md mx-auto">
         <TabsTrigger value="words">Créer</TabsTrigger>
         <TabsTrigger value="export" disabled={words.length < 5}>
@@ -286,22 +290,6 @@ export function CrosswordGenerator() {
                 Générer la grille
               </Button>
             </div>
-
-            {/* <div className="pt-4 border-t border-gray-200">
-              <Label htmlFor="bulk">
-                Ajout en lot (MOT: DÉFINITION, un par ligne)
-              </Label>
-              <Textarea
-                id="bulk"
-                value={wordInput}
-                onChange={(e) => setWordInput(e.target.value)}
-                placeholder="CHAT: Félin domestique&#10;MAISON: Lieu d'habitation&#10;JARDIN: Espace cultivé"
-                className="min-h-[150px] mt-2"
-              />
-              <Button onClick={handleBulkAddWords} className="mt-2">
-                Ajouter en lot
-              </Button>
-            </div> */}
           </div>
         </Card>
 
