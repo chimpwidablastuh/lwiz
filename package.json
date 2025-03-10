@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@fingerprintjs/fingerprintjs": "^4.6.1",
     "@prisma/client": "^6.4.1",
     "@radix-ui/react-label": "^2.1.2",
     "@radix-ui/react-slot": "^1.1.2",
@@ -19,8 +20,10 @@
     "framer-motion": "^12.4.10",
     "html2canvas": "^1.4.1",
     "html2canvas-pro": "^1.5.8",
+    "jotai": "^2.12.1",
     "jspdf": "^3.0.0",
     "lucide-react": "^0.479.0",
+    "md5": "^2.3.0",
     "next": "15.2.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -30,6 +33,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@types/md5": "^2.3.5",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

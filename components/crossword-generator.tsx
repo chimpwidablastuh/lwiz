@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas-pro";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -8,12 +10,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { WordList } from "@/components/word-list";
 import { CrosswordGrid } from "@/components/crossword-grid";
-// import { Textarea } from "@/components/ui/textarea";
 import { generateCrossword } from "@/lib/crossword-algorithm";
 import { useToast } from "@/hooks/use-toast";
-import { jsPDF } from "jspdf";
-import html2canvas from "html2canvas-pro";
 import { words as mocks } from "@/mocks/words";
+import { ExportPDFButton, PublishButton } from "./buttons";
+import { publishGrid } from "@/actions/publish";
+import { useFingerprint } from "@/lib/fingerprint";
 
 export type Word = {
   id: string;
@@ -37,7 +39,8 @@ export type CrosswordData = {
 };
 
 export function CrosswordGenerator() {
-  const [words, setWords] = useState<Word[]>([]);
+  const fingerprint = useFingerprint();
+  const [words, setWords] = useState<Word[]>(mocks);
   const [newWord, setNewWord] = useState("");
   const [newDefinition, setNewDefinition] = useState("");
   // const [wordInput, setWordInput] = useState("");
@@ -46,6 +49,8 @@ export function CrosswordGenerator() {
   const [crosswordData, setCrosswordData] = useState<CrosswordData | null>(
     null
   );
+  const [pdfLoading, setPdfLoading] = useState(false);
+  const [publishLoading, setPublishLoading] = useState(false);
   const { toast } = useToast();
   const crosswordRef = useRef<HTMLDivElement>(null);
 
@@ -123,6 +128,7 @@ export function CrosswordGenerator() {
 
   const handleExportPDF = async () => {
     setHiddenMode(true);
+    setPdfLoading(true);
     await new Promise((resolve) => setTimeout(resolve, 100));
     if (!crosswordRef.current || !crosswordData) {
       console.log("triggered inside");
@@ -190,11 +196,24 @@ export function CrosswordGenerator() {
       });
     }
     setHiddenMode(false);
+    setPdfLoading(false);
   };
 
   function onSubmitForm(e: React.FormEvent) {
     e.preventDefault();
     handleAddWord();
+  }
+
+  async function onPublish() {
+    setPublishLoading(true);
+    console.log("User fingerprint:", fingerprint);
+    const grid = await publishGrid({
+      identifier: fingerprint || "",
+      words: words.map((w) => ({ word: w.word, clue: w.definition })),
+    });
+
+    console.log("grid:", grid);
+    setPublishLoading(false);
   }
 
   return (
@@ -275,17 +294,11 @@ export function CrosswordGenerator() {
           {crosswordData && (
             <>
               <div className="flex justify-center mb-6">
-                <Button
-                  size="lg"
-                  // onClick={onPublish}
-                  disabled={true}
-                  className="px-8 mr-4"
-                >
-                  Publier
-                </Button>
-                <Button size="lg" onClick={handleExportPDF} className="px-8">
-                  Exporter en PDF
-                </Button>
+                <ExportPDFButton
+                  onClick={handleExportPDF}
+                  loading={pdfLoading}
+                />
+                <PublishButton onClick={onPublish} loading={publishLoading} />
               </div>
 
               <div className="mt-4 border rounded-lg p-4" ref={crosswordRef}>

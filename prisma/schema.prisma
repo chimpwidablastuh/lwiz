@@ -10,6 +10,8 @@ datasource db {
 model Grid {
   id        String   @id @default(cuid()) @map("_id")
   words     Word[]
+  hash      String   @unique
+  createdBy String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
