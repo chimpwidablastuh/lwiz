@@ -20,16 +20,17 @@ export default function Home() {
             Le premier générateur de mots fléchés permettant de réconcilier
             ensemble les mots{" "}
             <Typewriter
-              pauseDuration={2000}
+              pauseDuration={500}
               fontSize={20}
               words={[
-                "Gecko",
-                "Gorille",
-                "Amour",
-                "Passion",
-                "Éternité",
-                "Confiance",
-                "Courage",
+                "gecko",
+                "gorille",
+                "amour",
+                "passion",
+                "éternité",
+                "confiance",
+                "courage",
+                "bonheur",
               ]}
             />{" "}
             dans un même référentiel.
