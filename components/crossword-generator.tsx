@@ -16,6 +16,11 @@ import { words as mocks } from "@/mocks/words";
 import { ExportPDFButton, PublishButton } from "./buttons";
 import { publishGrid } from "@/actions/publish";
 import { useFingerprint } from "@/lib/fingerprint";
+import { Grid } from "@prisma/client";
+
+export interface CrosswordGeneratorProps {
+  initialGrid?: Grid;
+}
 
 export type Word = {
   id: string;
@@ -38,9 +43,17 @@ export type CrosswordData = {
   }[];
 };
 
-export function CrosswordGenerator() {
+export function CrosswordGenerator({ initialGrid }: CrosswordGeneratorProps) {
+  const playMode = !!initialGrid;
+  const createMode = !playMode;
   const fingerprint = useFingerprint();
-  const [words, setWords] = useState<Word[]>(mocks);
+  const [words, setWords] = useState<Word[]>(
+    initialGrid?.words?.map((w: any) => ({
+      id: w.word,
+      word: w.word,
+      definition: w.clue,
+    })) || []
+  );
   const [newWord, setNewWord] = useState("");
   const [newDefinition, setNewDefinition] = useState("");
   // const [wordInput, setWordInput] = useState("");
@@ -51,6 +64,7 @@ export function CrosswordGenerator() {
   );
   const [pdfLoading, setPdfLoading] = useState(false);
   const [publishLoading, setPublishLoading] = useState(false);
+  const [publishedGrid, setPublishedGrid] = useState<Grid | null>(null);
   const { toast } = useToast();
   const crosswordRef = useRef<HTMLDivElement>(null);
 
@@ -206,90 +220,106 @@ export function CrosswordGenerator() {
 
   async function onPublish() {
     setPublishLoading(true);
-    console.log("User fingerprint:", fingerprint);
     const grid = await publishGrid({
       identifier: fingerprint || "",
       words: words.map((w) => ({ word: w.word, clue: w.definition })),
     });
 
-    console.log("grid:", grid);
+    if (grid.grid) setPublishedGrid(grid.grid);
+
     setPublishLoading(false);
   }
 
   return (
-    <Tabs defaultValue="words" value={selectedTab} className="space-y-6">
-      <TabsList className="grid grid-cols-2 w-full max-w-md mx-auto">
-        <TabsTrigger value="words" onClick={() => setSelectedTab("words")}>
-          Créer
-        </TabsTrigger>
+    <Tabs
+      defaultValue={createMode ? "words" : "export"}
+      value={selectedTab}
+      className="space-y-6"
+    >
+      <TabsList
+        className={
+          createMode
+            ? "grid grid-cols-2 w-full max-w-md mx-auto"
+            : "grid grid-cols-1 w-full max-w-xs mx-auto"
+        }
+      >
+        {createMode && (
+          <TabsTrigger value="words" onClick={() => setSelectedTab("words")}>
+            Créer
+          </TabsTrigger>
+        )}
         <TabsTrigger
           value="export"
           disabled={words.length < 5}
           onClick={() => setSelectedTab("export")}
         >
-          Partager
+          {playMode ? "Jouer" : "Partager"}
         </TabsTrigger>
       </TabsList>
 
-      <TabsContent value="words">
-        <Card className="p-6">
-          <div className="space-y-4">
-            <div className="grid gap-4">
-              <form
-                onSubmit={onSubmitForm}
-                onKeyDown={(e) => e.key === "Enter" && onSubmitForm(e)}
-              >
-                <div>
-                  <Label htmlFor="word">Mot</Label>
-                  <Input
-                    className="mt-2"
-                    id="word"
-                    value={newWord}
-                    onChange={(e) => setNewWord(e.target.value)}
-                    placeholder="Mot à deviner"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="definition" className="mt-4">
-                    Définition
-                  </Label>
-                  <Input
-                    className="mt-2"
-                    id="definition"
-                    maxLength={20}
-                    value={newDefinition}
-                    onChange={(e) => setNewDefinition(e.target.value)}
-                    placeholder="Saisir indice (20 lettres max)"
-                  />
-                </div>
-              </form>
-              <Button onClick={handleAddWord}>Ajouter le mot</Button>
-              <Button
-                onClick={() => setSelectedTab("export")}
-                disabled={words.length < 5}
-              >
-                Voir la grille
-              </Button>
+      {createMode && (
+        <TabsContent value="words">
+          <Card className="p-6">
+            <div className="space-y-4">
+              <div className="grid gap-4">
+                <form
+                  onSubmit={onSubmitForm}
+                  onKeyDown={(e) => e.key === "Enter" && onSubmitForm(e)}
+                >
+                  <div>
+                    <Label htmlFor="word">Mot</Label>
+                    <Input
+                      className="mt-2"
+                      id="word"
+                      value={newWord}
+                      onChange={(e) => setNewWord(e.target.value)}
+                      placeholder="Mot à deviner"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="definition" className="mt-4">
+                      Définition
+                    </Label>
+                    <Input
+                      className="mt-2"
+                      id="definition"
+                      maxLength={20}
+                      value={newDefinition}
+                      onChange={(e) => setNewDefinition(e.target.value)}
+                      placeholder="Saisir indice (20 lettres max)"
+                    />
+                  </div>
+                </form>
+                <Button onClick={handleAddWord}>Ajouter le mot</Button>
+                <Button
+                  onClick={() => setSelectedTab("export")}
+                  disabled={words.length < 5}
+                >
+                  Voir la grille
+                </Button>
+              </div>
             </div>
-          </div>
-        </Card>
+          </Card>
 
-        <div className="mt-6">
-          <h2 className="text-xl font-semibold mb-4">
-            Liste des mots ({words.length})
-          </h2>
-          <WordList words={words} onRemoveWord={handleRemoveWord} />
-        </div>
-      </TabsContent>
+          <div className="mt-6">
+            <h2 className="text-xl font-semibold mb-4">
+              Liste des mots ({words.length})
+            </h2>
+            <WordList words={words} onRemoveWord={handleRemoveWord} />
+          </div>
+        </TabsContent>
+      )}
 
       <TabsContent value="export">
         <Card className="p-6">
-          <div className="text-center mb-6">
-            <h2 className="text-xl font-semibold">Exporter la grille</h2>
-            <p className="text-gray-500 mt-2">
-              Visualisez et exportez votre grille de mots fléchés
-            </p>
-          </div>
+          {createMode && (
+            <div className="text-center mb-6">
+              <h2 className="text-xl font-semibold">Exporter la grille</h2>
+              <p className="text-gray-500 mt-2">
+                Visualisez et exportez votre grille de mots fléchés
+              </p>
+            </div>
+          )}
 
           {crosswordData && (
             <>
@@ -298,13 +328,15 @@ export function CrosswordGenerator() {
                   onClick={handleExportPDF}
                   loading={pdfLoading}
                 />
-                <PublishButton onClick={onPublish} loading={publishLoading} />
+                {createMode && (
+                  <PublishButton onClick={onPublish} loading={publishLoading} />
+                )}
               </div>
 
               <div className="mt-4 border rounded-lg p-4" ref={crosswordRef}>
                 <CrosswordGrid
                   crosswordData={crosswordData}
-                  hidden={hiddenMode}
+                  hidden={hiddenMode || !createMode}
                 />
               </div>
             </>
