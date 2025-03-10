@@ -17,6 +17,7 @@ import { ExportPDFButton, PublishButton } from "./buttons";
 import { publishGrid } from "@/actions/publish";
 import { useFingerprint } from "@/lib/fingerprint";
 import { Grid } from "@prisma/client";
+import MessageStrip from "./message-strip";
 
 export interface CrosswordGeneratorProps {
   initialGrid?: Grid;
@@ -52,13 +53,15 @@ export function CrosswordGenerator({ initialGrid }: CrosswordGeneratorProps) {
       id: w.word,
       word: w.word,
       definition: w.clue,
-    })) || []
+    })) || mocks
   );
   const [newWord, setNewWord] = useState("");
   const [newDefinition, setNewDefinition] = useState("");
   // const [wordInput, setWordInput] = useState("");
   const [hiddenMode, setHiddenMode] = useState(false);
-  const [selectedTab, setSelectedTab] = useState<"words" | "export">("words");
+  const [selectedTab, setSelectedTab] = useState<"words" | "export">(
+    createMode ? "words" : "export"
+  );
   const [crosswordData, setCrosswordData] = useState<CrosswordData | null>(
     null
   );
@@ -332,6 +335,13 @@ export function CrosswordGenerator({ initialGrid }: CrosswordGeneratorProps) {
                   <PublishButton onClick={onPublish} loading={publishLoading} />
                 )}
               </div>
+              {publishedGrid && (
+                <MessageStrip
+                  text="Votre grille est disponible pour vos amis !"
+                  lien={`/play/${publishedGrid?.id}`}
+                  // onClose={() => setShowMessage(false)}
+                />
+              )}
 
               <div className="mt-4 border rounded-lg p-4" ref={crosswordRef}>
                 <CrosswordGrid
