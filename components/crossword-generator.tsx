@@ -37,7 +37,7 @@ export type CrosswordData = {
 };
 
 export function CrosswordGenerator() {
-  const [words, setWords] = useState<Word[]>(mocks);
+  const [words, setWords] = useState<Word[]>([]);
   const [newWord, setNewWord] = useState("");
   const [newDefinition, setNewDefinition] = useState("");
   // const [wordInput, setWordInput] = useState("");
