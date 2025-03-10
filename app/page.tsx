@@ -1,6 +1,7 @@
 import Squares from "@/components/backgrounds/Squares/Squares";
 import { CrosswordGenerator } from "@/components/crossword-generator";
 import Lwiz from "@/components/logo";
+import { Typewriter } from "@/components/typewriter";
 
 export default function Home() {
   return (
@@ -16,7 +17,22 @@ export default function Home() {
         <div className="max-w-3xl mx-auto">
           <Lwiz />
           <p className="text-center mb-8 text-gray-600">
-            Créez vos propres mots fléchés et partagez-les avec vos amis.
+            Le premier générateur de mots fléchés permettant de réconcilier
+            ensemble les mots{" "}
+            <Typewriter
+              pauseDuration={2000}
+              fontSize={20}
+              words={[
+                "Gecko",
+                "Gorille",
+                "Amour",
+                "Passion",
+                "Éternité",
+                "Confiance",
+                "Courage",
+              ]}
+            />{" "}
+            dans un même référentiel.
           </p>
           <CrosswordGenerator />
         </div>

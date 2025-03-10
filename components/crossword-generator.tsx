@@ -339,7 +339,6 @@ export function CrosswordGenerator({ initialGrid }: CrosswordGeneratorProps) {
                 <MessageStrip
                   text="Votre grille est disponible pour vos amis !"
                   lien={`/play/${publishedGrid?.id}`}
-                  // onClose={() => setShowMessage(false)}
                 />
               )}
 
