@@ -53,7 +53,7 @@ export function CrosswordGenerator({ initialGrid }: CrosswordGeneratorProps) {
       id: w.word,
       word: w.word,
       definition: w.clue,
-    })) || mocks
+    })) || []
   );
   const [newWord, setNewWord] = useState("");
   const [newDefinition, setNewDefinition] = useState("");
@@ -346,6 +346,7 @@ export function CrosswordGenerator({ initialGrid }: CrosswordGeneratorProps) {
                 <CrosswordGrid
                   crosswordData={crosswordData}
                   hidden={hiddenMode || !createMode}
+                  // playMode={playMode}
                 />
               </div>
             </>

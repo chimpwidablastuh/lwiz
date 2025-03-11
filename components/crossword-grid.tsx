@@ -7,11 +7,36 @@ import type { CrosswordData } from "@/components/crossword-generator";
 interface CrosswordGridProps {
   crosswordData: CrosswordData;
   hidden?: boolean;
+  playMode?: boolean;
 }
 
-export function CrosswordGrid({ crosswordData, hidden }: CrosswordGridProps) {
+export function CrosswordGrid({
+  crosswordData,
+  hidden,
+  playMode = false,
+}: CrosswordGridProps) {
   const [cellSize, setCellSize] = useState(40);
   const [ratio, setRatio] = useState(1);
+  const isHidden = hidden || playMode;
+  const readMode = !playMode;
+
+  console.log("crosswordData:", crosswordData);
+
+  // Récupération des zones cliquables
+  // Récupération des coordonnées entières des mots
+  const wordsCoords = crosswordData.words.map((word) => {
+    const { position, word: w, direction, definition } = word;
+    const start = position;
+    if (start?.x && start?.y) {
+      const end =
+        direction === "horizontal"
+          ? { x: start.x + w.length - 1, y: start.y }
+          : { x: start.x, y: start.y + w.length - 1 };
+      return { start, end, word, definition };
+    }
+  });
+
+  console.log("wordsCoords:", wordsCoords);
 
   useEffect(() => {
     // Ajuster la taille des cellules en fonction de la taille de la grille
@@ -81,9 +106,20 @@ export function CrosswordGrid({ crosswordData, hidden }: CrosswordGridProps) {
                     </div>
                   ) : (
                     cellValue && (
-                      <span className="select-none font-medium">
-                        {!hidden && cellValue}
-                      </span>
+                      <>
+                        {readMode ? (
+                          <span className="select-none font-medium">
+                            {!isHidden && cellValue}
+                          </span>
+                        ) : (
+                          <input
+                            type="text"
+                            maxLength={1}
+                            autoComplete="off"
+                            className="w-full h-full text-center bg-transparent outline-none"
+                          />
+                        )}
+                      </>
                     )
                   )}
                 </div>
